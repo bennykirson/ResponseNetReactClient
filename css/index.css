@@ -1,0 +1,139 @@
+*,
+*:before,
+*:after{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-size: 100%;
+    background-color: #fbfbfb;
+    color: #04052d;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.skip-link {
+    position: absolute;
+    left: 6px;
+    top: -100px; /* position offscreen so it's not visible, but can receive focus*/
+    z-index: 100000;
+    font-size: 1em;
+    font-weight: bold;
+    display: block;
+    background: #eed777;
+    color: #383838; /*The link is clear*/
+    height: auto;
+    width: auto;
+    line-height: normal;
+    padding: 15px 25px;
+    text-decoration: none;
+    -webkit-transition: top 1s ease-out;
+    transition: top 1s ease-out;
+}
+
+.skip-link:focus {
+    top: 5px; /* Move onto screen */
+    -webkit-transition: right 0s;
+    transition: right 0s; /*Animate, to make its appearance obvious */
+}
+
+#buttons_div {
+    position: absolute;
+    top: 0.4%;
+    right: 0.5%;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+.form-help-icon {
+    cursor: help;
+    vertical-align: super;
+    font-size: 0.85em;
+    color: #0000ed;
+}
+
+.file-button {
+    position: relative;
+    overflow: hidden;
+}
+
+.file-button input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+/**
+ * Rangeslider
+ */
+.rangeslider {
+    margin: 20px 0;
+    position: relative;
+    background: #e6e6e6;
+}
+.rangeslider .rangeslider__fill,
+.rangeslider .rangeslider__handle {
+    position: absolute;
+}
+.rangeslider,
+.rangeslider .rangeslider__fill {
+    display: block;
+    box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3);
+}
+.rangeslider .rangeslider__handle {
+    background: #fff;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    display: inline-block;
+    position: absolute;
+}
+.rangeslider .rangeslider__handle:active {
+    background: #999;
+}
+/**
+ * Rangeslider - Horizontal slider
+ */
+.rangeslider-horizontal {
+    height: 20px;
+    border-radius: 10px;
+}
+.rangeslider-horizontal .rangeslider__fill {
+    height: 100%;
+    background: #27ae60;
+    border-radius: 10px;
+    top: 0;
+}
+.rangeslider-horizontal .rangeslider__handle {
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    top: -10px;
+}
+.session-item:hover{
+    text-decoration: underline;
+}
+#THISISCY {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    display: block;
+
+}
+
