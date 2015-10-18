@@ -5,45 +5,46 @@ import $ from "jquery";
  * @returns array of session names
  */
 function getSessionsFromXML(sessionXML) {
-    var ans = [];
-    var sessions = $(sessionXML).find("Sessions");
-    $(sessions[0]).find("Session").each(function () {
-        var session = {};
-        $(this).find("Name").each(function () {
-            session.name = this.textContent;
-        });		//Job Name
-        $(this).find("Email").each(function () {
-            session.email = this.textContent;
-        });		//Username
-        $(this).find("ID").each(function () {
-            session.id = this.textContent;
-        });			//GUID
-        ans.push(session);
-    });
-    return ans;
+  var ans = [];
+  var sessions = $(sessionXML).find("Sessions");
+  $(sessions[0]).find("Session").each(function () {
+    var session = {};
+    $(this).find("Name").each(function () {
+      session.name = this.textContent;
+    });		//Job Name
+    $(this).find("Email").each(function () {
+      session.email = this.textContent;
+    });		//Username
+    $(this).find("ID").each(function () {
+      session.id = this.textContent;
+    });			//GUID
+    ans.push(session);
+  });
+  return ans;
 }
 
 function getXMLFromString(formattedGraphMLString) {
-    try {
-        var xmlDocument;
-        if (window.DOMParser) {
-            var parser = new DOMParser();
-            xmlDocument = parser.parseFromString(formattedGraphMLString, "text/xml");
-        }
-        else // Internet Explorer
-        {
-            xmlDocument = new ActiveXObject("Microsoft.XMLDOM");
-            xmlDocument.async = "false";
-            xmlDocument.loadXML(formattedGraphMLString);
-        }
+  try {
+    var xmlDocument;
+    if (window.DOMParser) {
+      var parser = new DOMParser();
+      xmlDocument = parser.parseFromString(formattedGraphMLString, "text/xml");
     }
-    catch (error) {
-        alert(error.toString());
+    else // Internet Explorer
+    {
+      xmlDocument = new ActiveXObject("Microsoft.XMLDOM");
+      xmlDocument.async = "false";
+      xmlDocument.loadXML(formattedGraphMLString);
     }
-    return xmlDocument;
+  }
+  catch (error) {
+    alert(error.toString());
+  }
+  return xmlDocument;
 }
 
+
 export default {
-    getXMLFromString: getXMLFromString,
-    getSessionsFromXML: getSessionsFromXML
+  getXMLFromString: getXMLFromString,
+  getSessionsFromXML: getSessionsFromXML
 }

@@ -28,6 +28,8 @@ var routes = (
     </Route>
 );
 
-React.render(<Router history={createBrowserHistory()}>{routes}</Router>, document.body);
-
+React.render(<Router>{routes}</Router>, document.body);
+// FIXME THIS IS THE CORRECT WAY TO DO THIS !!!!
+ //React.render(<Router history={createBrowserHistory()}>{routes}</Router>, document.body);
+//FIXME IT BOTHERS ME ON DEVELOPMENT
 

@@ -19,7 +19,12 @@ var Graph = React.createClass({
       var data = [this.props.sessionId, localStorage.userName];
       getXML("LoadSession", data).fork(R.noop, (res) => {
         var parsed = JSON.parse(res.text);
+        console.log(res.text);
+
         var graphXML = getXMLFromString(parsed.result);
+        console.log(graphXML);
+        console.log(parsed);
+
         this.setState({
           graph: graphXML,
           isLoaded: true
@@ -37,7 +42,7 @@ var Graph = React.createClass({
           {this.state.isLoaded ? (
               <div className="ui grid">
                 <div className="ui ten wide column"><CytoscapeComponent /></div>
-                <div className="ui six wide column"><TabberComponent/>
+                <div className="ui one wide column"><TabberComponent/>
                 </div>
               </div>
           ) : (
