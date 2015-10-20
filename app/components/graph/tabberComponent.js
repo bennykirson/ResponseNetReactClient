@@ -11,19 +11,41 @@ var TabberComponent = React.createClass({
   render() {
     return (
         <div>
-          <div className="ui top attached tabular menu FU">
-            <a className="active item" data-tab="tab-name2">Tab Name 2</a>
-            <a className="item" data-tab="tab-name3">Tab Name 3</a>
-            <a className=" item" data-tab="tab-name4">Tab Name 4</a>
-            <a className=" item" data-tab="tab-name45">Tab Name 45</a>
-            <a className=" item" data-tab="tab-name46">Tab Name 46</a>
-            <a className=" item" data-tab="tab-name47">Tab Name 47</a>
-            <a className=" item" data-tab="tab-name48">Tab Name 48</a>
-            <a className=" item" data-tab="tab-name49">Tab Name 49</a>
+          <div className="ui top attached tabular menu">
+            <a className="item" data-tab="tab-name2">Properties</a>
+            <a className="item" data-tab="tab-name3">Layers</a>
+            <a className="item" data-tab="tab-name4">Gene Ontology</a>
+            <a className="item" data-tab="tab-name45">Chemicals</a>
+            <a className="item" data-tab="tab-name46">Summary</a>
+            <a className="item" data-tab="tab-name47">Files</a>
+            <a className="item" data-tab="tab-name48">Log</a>
+            <a className="item" data-tab="tab-name49">Graph Options</a>
           </div>
           <div className="ui bottom attached active tab segment" data-tab="tab-name2">
             <p></p>
             2
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
             <p></p>
           </div>
           <div className="ui bottom attached  tab segment" data-tab="tab-name3">

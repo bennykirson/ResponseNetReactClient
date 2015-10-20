@@ -8,7 +8,8 @@ var LoadSessions = React.createClass({
   getInitialState() {
     return {
       jsonSessions: [],
-      isLoaded: false
+      isLoaded: false,
+      noUser: false
     };
   },
   componentWillMount() {
@@ -22,6 +23,11 @@ var LoadSessions = React.createClass({
         });
       });
 
+    } else {
+      this.setState({
+        noUser: true,
+        isLoaded: true
+      });
     }
 
   },
@@ -32,9 +38,20 @@ var LoadSessions = React.createClass({
 
         <div className="ui segment centered very padded">
           <div className="ui header">Previous Sessions</div>
-          <p>For {localStorage.userName}</p>
+
           {this.state.isLoaded ? (
-              <SessionList sessions={this.state.jsonSessions}/>
+              <div>
+                {this.state.noUser ? (
+                    <div>
+                      <p>You need to log in to see the sessions</p>
+                    </div>
+                ) : (
+                    <div>
+                      <p>For {localStorage.userName}</p>
+                      <SessionList sessions={this.state.jsonSessions}/>
+                    </div>)
+                }
+              </div>
           ) : (
 
               <div className="ui active inverted dimmer">

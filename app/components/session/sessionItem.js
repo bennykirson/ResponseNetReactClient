@@ -5,10 +5,11 @@ var SessionItem = React.createClass({
 
   render(){
     var {sessionName,sessionId,...other}=this.props;
+
     return (
         <div className="item">
           <div className="content">
-            <Link to={"/graph"} params={sessionId} className="header session-item">
+            <Link to={`/graph/${sessionId}`} className="header session-item">
               {sessionName}
             </Link>
           </div>

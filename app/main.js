@@ -22,14 +22,14 @@ var routes = (
       <Route path="home" component={ Home }/>
       <Route path="login" component={ Login }/>
       <Route path="load-session" component={ LoadSession }/>
-      <Route path="graph" component={ Graph }/>
+      <Route path="graph/:sessionId" component={ Graph }/>
 
 
     </Route>
 );
 
-React.render(<Router>{routes}</Router>, document.body);
+//React.render(<Router>{routes}</Router>, document.body);
 // FIXME THIS IS THE CORRECT WAY TO DO THIS !!!!
- //React.render(<Router history={createBrowserHistory()}>{routes}</Router>, document.body);
+ React.render(<Router history={createBrowserHistory()}>{routes}</Router>, document.body);
 //FIXME IT BOTHERS ME ON DEVELOPMENT
 

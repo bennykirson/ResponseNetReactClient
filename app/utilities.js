@@ -43,8 +43,45 @@ function getXMLFromString(formattedGraphMLString) {
   return xmlDocument;
 }
 
+function getJSONFromGraphML(formattedGraphMLString) {
+  var elesJson = {nodes: [], edges: []};
+  var dataSchema = {nodes: [], edges: []};
+  var ans = [];
+//Building the dataScheme of the graph mapping keys with attributes to nodes or edges
+  var graph = $(formattedGraphMLString).find("key").each(function () {
+    var key = {};
+    key.name = $(this).attr("attr.name");
+    key.type = $(this).attr("attr.type");
+    $(this).attr("for") === "nodes" ? dataSchema.nodes.push(key) : dataSchema.edges.push(key);
+  });
+  graph = $(formattedGraphMLString).find("node").each(function () {
+    var key = {data: {id: $(this).attr("id")}};
 
+
+    var data = $(this).find("data").each(function () {
+      var attrName = $(this).attr("key");
+      key.data[attrName] = $(this).text();
+    });
+    elesJson.nodes.push(key);
+  });
+  graph = $(formattedGraphMLString).find("edge").each(function () {
+    var key = {data: {source: $(this).attr("source"), target: $(this).attr("target")}};
+    var data = $(this).find("data").each(function () {
+      var attrName = $(this).attr("key");
+      key.data[attrName] = $(this).text();
+    });
+    elesJson.edges.push(key);
+  });
+  console.log("Schema");
+  console.log(dataSchema);
+  console.log("data");
+  console.log(elesJson);
+
+  return elesJson;
+
+}
 export default {
+  getJSONFromGraphML: getJSONFromGraphML,
   getXMLFromString: getXMLFromString,
   getSessionsFromXML: getSessionsFromXML
 }

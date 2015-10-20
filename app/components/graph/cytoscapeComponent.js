@@ -9,85 +9,117 @@ var CytoscapeComponent = React.createClass({
     var element=React.findDOMNode(this);
     var blaCy = cytoscape({
       container:element,
+      elements: this.props.data,
+      ready: function() {
+      },
+      layout: {
+        name: 'breadthfirst',
+        fit: true, // whether to fit the viewport to the graph
+        directed: true, // whether the tree is directed downwards (or edges can point in any direction if false)
+        circle: false, // put depths in concentric circles if true, put depths top down if false
+        avoidOverlap: true, // prevents nœode overlap, may overflow boundingBox if not enough space
+        maximalAdjustments: 0 // how many times to try to position the nodes in a maximal way (i.e. no backtracking)
+
+      },
+
+      //initial view point state
+      zoom: 1,
+      pan: {x: 0, y: 0},
+      // interaction options
+      minZoom: 1e-50,
+      maxZoom: 1e50,
+      zoomingEnabled: true,
+      userZoomingEnabled: true,
+      panningEnabled: true,
+
+      userPanningEnabled: true,
+      boxSelectionEnabled: true, // Create a box and select multiple nodes/edges
+      //rendering options
+      styleEnabled: true,
+      motionBlur: false,
       style: cytoscape.stylesheet()
           .selector('node')
           .css({
-            'content': 'data(name)',
+            'content': 'data(commonName)',
             'text-valign': 'center',
-            'color': 'white',
-            'text-outline-width': 2,
-            'text-outline-color': '#888'
+            'text-outline-width': 1.5,
+            'text-outline-color': 'black',
+            'font-size': '10',
+            // 'background-color': 'red',
+            'color': '#fff',
+            'border-width': '2px',
+            'border-style': 'solid',
+            'border-color': 'black'
+
+          })
+          .selector('node[color = 0]')
+          .css({
+            'background-color': '#E6E6E6',
+            'shape': 'rectangle'
+          })
+          .selector('node[color = 1]')
+          .css({
+            'background-color': '#FE9A2E',
+            'shape': 'roundrectangle'
+          })
+          .selector('node[color = 2]')
+          .css({
+            'background-color': '#2E9AFE',
+            'shape': 'ellipse'
+          })
+          .selector('node[color = 3]')
+          .css({
+            'background-color': '#C2EB95',
+            'shape': 'pentagon'
+          })
+          .selector('node[color = 4]')
+          .css({
+            'background-color': '#C2EB95',
+            'shape': 'triangle'
+          })
+          .selector('node[color = 5]')
+          .css({
+            'background-color': '#9999999',
+            'shape': 'hexagon',
+            'color': 'red'
+          })
+          .selector('node[color = 6]')
+          .css({
+            'background-color': '#00AEEF',
+            'shape': 'heptagon'
+          })
+          .selector('node[color = 7]')
+          .css({
+            'background-color': '#C2EB95',
+            'shape': 'octagon'
+          })
+          .selector('node[color = 8]')
+          .css({
+            'background-color': '#C2EB95',
+            'shape': 'star'
           })
           .selector('edge')
           .css({
-            'target-arrow-shape': 'triangle'
+            'opacity': 0.666,
+            'width': '0.9px',
+            'target-arrow-shape': 'triangle',
+            'line-color': 'black',
+            'target-arrow-color': 'black'
           })
           .selector(':selected')
           .css({
-            'background-color': 'black',
-            'line-color': 'black',
-            'target-arrow-color': 'black',
-            'source-arrow-color': 'black'
+            "overlay-color": "yellow",
+            "overlay-padding": 2.5,
+            "overlay-opacity": 0.3
           })
-          .selector('.faded')
-          .css({
-            'opacity': 0.25,
-            'text-opacity': 0
-          }),
 
-      elements: {
-        nodes: [
-          { data: { id: 'j', name: 'Jerry' } },
-          { data: { id: 'e', name: 'Elaine' } },
-          { data: { id: 'k', name: 'Kramer' } },
-          { data: { id: 'g', name: 'George' } }
-        ],
-        edges: [
-          { data: { source: 'j', target: 'e' } },
-          { data: { source: 'j', target: 'k' } },
-          { data: { source: 'j', target: 'g' } },
-          { data: { source: 'e', target: 'j' } },
-          { data: { source: 'e', target: 'k' } },
-          { data: { source: 'k', target: 'j' } },
-          { data: { source: 'k', target: 'e' } },
-          { data: { source: 'k', target: 'g' } },
-          { data: { source: 'g', target: 'j' } }
-        ]
-      },
-
-      layout: {
-        name: 'grid',
-        padding: 10
-      },
-
-      // on graph initial layout done (could be async depending on layout...)
-      ready: function(){
-        window.cy = this;
-
-        // giddy up...
-
-        cy.elements().unselectify();
-
-        cy.on('tap', 'node', function(e){
-          var node = e.cyTarget;
-          var neighborhood = node.neighborhood().add(node);
-
-          cy.elements().addClass('faded');
-          neighborhood.removeClass('faded');
-        });
-
-        cy.on('tap', function(e){
-          if( e.cyTarget === cy ){
-            cy.elements().removeClass('faded');
-          }
-        });
-      }
     });
 
 
   },
 
   render() {
+    var {data,...other}=this.props;
     return (
         <div id="THISISCY"/>
     );

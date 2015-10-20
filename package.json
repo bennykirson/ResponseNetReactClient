@@ -49,6 +49,7 @@
     "react": "^0.13.3",
     "react-rangeslider": "^1.0.0",
     "react-router": "^1.0.0-rc1",
+    "react-tabs": "^0.4.1",
     "require-dot-file": "^0.4.0",
     "run-sequence": "^1.1.2",
     "semantic-ui": "^2.1.3",
