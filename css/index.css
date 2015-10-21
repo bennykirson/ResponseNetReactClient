@@ -129,14 +129,18 @@ a:hover {
 .session-item:hover{
     text-decoration: underline;
 }
-#THISISCY {
+#cytoscapeDiv {
     height: 100%;
     width: 100%;
     position: absolute;
     display: block;
 
 }
-.FU{
-   width: 20px;
+.horizontal-scrollable{
+    max-width: 50em;
+    overflow: scroll;
 }
-
+.vertical-scrollable{
+    max-height: 30em;
+    overflow: scroll;
+}

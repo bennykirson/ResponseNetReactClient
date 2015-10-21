@@ -39,7 +39,11 @@ var Graph = React.createClass({
 
     }
   },
+  onChangeSelection(data){
+    console.log("inside graph");
+    console.log(data);
 
+  },
 
   render() {
     var {...other}=this.props;
@@ -47,7 +51,9 @@ var Graph = React.createClass({
         <div>
           {this.state.isLoaded ? (
               <div className="ui grid">
-                <div className="ui ten wide column"><CytoscapeComponent data={this.state.graph}/></div>
+                <div className="ui ten wide column"><CytoscapeComponent data={this.state.graph}
+                                                                        onChange={this.onChangeSelection}/>
+                </div>
                 <div className="ui six wide column">
                   <div className="ui segment container">
                     <Tabs
