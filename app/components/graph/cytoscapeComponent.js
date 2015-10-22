@@ -1,18 +1,21 @@
 import React from 'react';
 import cytoscape from 'cytoscape';
+import '../../jquery.qtip.min.js';
+import cyqtip from 'cytoscape-qtip';
 $.fn.cytoscape = cytoscape;
 
+cyqtip(cytoscape, $);
 var CytoscapeComponent = React.createClass({
 
       shouldComponentUpdate() {
         return false;
       },
       componentWillReceiveProps(nextProps) {
-        var currentProp1 = this.props.prop1;
-        var nextProp1 = nextProps.prop1;
-        if (currentProp1 != nextProp1) {
-          this.cytoscapeInstance.doSomething();
-        }
+        /* var currentProp1 = this.props.prop1;
+         var nextProp1 = nextProps.prop1;
+         if (currentProp1 != nextProp1) {
+         this.cytoscapeInstance.doSomething();
+         }*/
       },
       componentDidMount() {
         var element = React.findDOMNode(this);
@@ -156,11 +159,15 @@ var CytoscapeComponent = React.createClass({
       },
       onChangeSelection()
       {
-        this.props.onChange(this.cy.$(":selected"));
+        var nodes = this.cy.nodes(":selected").map((element) => element._private.data);
+        var edges = this.cy.edges(":selected").map((element) => element._private.data);
+        this.props.onChange(nodes,edges);
       }
       ,
       attachListeners()
       {
+        this.attachContext();
+        this.attachQtip();
         //Batch all selected elements into 1 event
         var selectTimeout;
         this.cy.on('select', () => {
@@ -172,7 +179,6 @@ var CytoscapeComponent = React.createClass({
 
         //Batch all unselected elements into 1 event
         var unSelectTimeout;
-
         this.cy.on('unselect', () => {
           clearTimeout(unSelectTimeout);
           unSelectTimeout = setTimeout(()=> {
@@ -180,9 +186,136 @@ var CytoscapeComponent = React.createClass({
           }, 100);
         });
 
-      }
-      ,
+        this.cy.on("cxttap", 'node', (evt) => {
+          var node = evt.cyTarget;
+          if (!node.selected()) {
+            this.cy.$(":selected").unselect();
+            node.select();
+          }
+        })
 
+      },
+      attachQtip(){
+        this.cy.elements('node').qtip({
+          content: function () {
+            return "Common Name:" + this.data('commonName') + '<br /><em>' + "ENSG:" + this.data('ENSG') + '<br /><em>' + "Entrez:" + this.data('Entrez'
+                ) + '</em>'
+
+          },
+          position: {
+            my: 'top left'
+          },
+          show: {
+            event: "mouseover"
+          },
+          hide: {
+            event: "mouseout"
+          },
+          style: {
+            classes: 'qtip-shadow',
+            tip: {
+              width: 16,
+              height: 8
+            }
+          }
+        });
+      },
+      attachContext(){
+        context.init({
+              preventDoubleContext: false,
+              compress: true
+
+            }
+        );
+        context.attach('#cytoscapeDiv', [
+          {header: 'Graph options'},
+          {
+            text: 'Change Layout', subMenu: [
+            {header: 'Layouts'},
+            {
+              text: 'Random', action: function (event) {
+              event.preventDefault();
+              // changeLayoutTab('random', {});
+            }
+            },
+            {
+              text: 'Grid', action: function (event) {
+              event.preventDefault();
+              // changeLayoutTab('grid', {});
+            }
+            },
+            {
+              text: 'Circle', action: function (event) {
+              event.preventDefault();
+              // changeLayoutTab('circle', {});
+            }
+            },
+            {
+              text: 'Concentric', action: function (event) {
+              event.preventDefault();
+              // changeLayoutTab('concentric', {});
+            }
+            },
+            {
+              text: 'Tree', action: function (event) {
+              event.preventDefault();
+              //  changeLayoutTab('breadthfirst', {});
+            }
+            }
+          ]
+          },
+          {
+            text: 'New layer from selected', action: function (event) {
+            event.preventDefault();
+            // addLocalSubgraph();
+          }
+          },
+
+          {
+            text: 'Get additional TFT', action: function (event) {
+            event.preventDefault();
+            //  additionalTFT();
+          }
+          },
+          {
+            text: 'Remove Nodes', action: function (event) {
+            event.preventDefault();
+            // removeSelected();
+          }
+          },
+          /*{
+           text: 'Restore Nodes', action: function(event) {
+           event.preventDefault();
+           restoreNodes();
+           }
+           },*/
+          {
+            text: 'Save Session', action: function (event) {
+            event.preventDefault();
+            // saveSession();
+          }
+          },
+          {divider: true},
+
+          {
+
+            text: 'Import GraphML as layer', action: function (event) {
+            event.preventDefault();
+            // importGraphAction("graphml");
+          }
+
+          },
+          {
+
+            text: 'Export graph to GraphML', action: function (event) {
+            event.preventDefault();
+            // exportGraph("graphml");
+          }
+
+          }
+
+        ]);
+      },
       render()
       {
         var {data,...other}=this.props;

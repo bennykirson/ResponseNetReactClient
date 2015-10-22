@@ -6,8 +6,8 @@ import TableRow from './tableRow';
 var PropertiesTab = React.createClass({
   render() {
     var {nodes,edges,...other}=this.props;
-    var nodesContent = nodes.map((item, i) => <TableRow key={ i } data={ nodes } />);
-    var edgesContent = edges.map((item, i) => <TableRow key={ i } data={ edges } />);
+   // var nodesContent = nodes.map((item, i) => <TableRow key={ i } data={ nodes } />);
+    //var edgesContent = edges.map((item, i) => <TableRow key={ i } data={ edges } />);
     return (
         <div>
           <h4>Properties for selected nodes and edges <QTipPopup

@@ -18,7 +18,9 @@ var Graph = React.createClass({
   getInitialState() {
     return {
       graph: {},
-      isLoaded: false
+      isLoaded: false,
+      selectedNodes:[],
+      selectedEdges:[]
     };
   },
   handleSelect (index, last) {
@@ -39,11 +41,9 @@ var Graph = React.createClass({
 
     }
   },
-  onChangeSelection(data){
-    console.log("inside graph");
-    console.log(data);
-
-  },
+  onChangeSelection(nodes,edges){
+  }
+  ,
 
   render() {
     var {...other}=this.props;
@@ -71,7 +71,7 @@ var Graph = React.createClass({
                         <Tab>Graph Options</Tab>
                       </TabList>
                       <TabPanel>
-                        <PropertiesTab />
+                        <PropertiesTab nodes={[]} edges={[]}/>
                       </TabPanel>
                       <TabPanel>
                         <h2>Hello from Bar</h2>
