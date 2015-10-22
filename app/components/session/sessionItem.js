@@ -9,7 +9,7 @@ var SessionItem = React.createClass({
     return (
         <div className="item">
           <div className="content">
-            <Link to={`/graph/${sessionId}`} className="header session-item">
+            <Link to={`/graph/${sessionId}/${sessionName}`} className="header session-item">
               {sessionName}
             </Link>
           </div>

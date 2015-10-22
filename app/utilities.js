@@ -46,25 +46,24 @@ function getXMLFromString(formattedGraphMLString) {
 function getJSONFromGraphML(formattedGraphMLString) {
   var elesJson = {nodes: [], edges: []};
   var dataSchema = {nodes: [], edges: []};
-  var ans = [];
+
 //Building the dataScheme of the graph mapping keys with attributes to nodes or edges
-  var graph = $(formattedGraphMLString).find("key").each(function () {
+  $(formattedGraphMLString).find("key").each(function () {
     var key = {};
     key.name = $(this).attr("attr.name");
     key.type = $(this).attr("attr.type");
     $(this).attr("for") === "nodes" ? dataSchema.nodes.push(key) : dataSchema.edges.push(key);
   });
-  graph = $(formattedGraphMLString).find("node").each(function () {
+  $(formattedGraphMLString).find("node").each(function () {
     var key = {data: {id: $(this).attr("id")}};
 
-
-    var data = $(this).find("data").each(function () {
+    $(this).find("data").each(function () {
       var attrName = $(this).attr("key");
       key.data[attrName] = $(this).text();
     });
     elesJson.nodes.push(key);
   });
-  graph = $(formattedGraphMLString).find("edge").each(function () {
+  $(formattedGraphMLString).find("edge").each(function () {
     var key = {data: {source: $(this).attr("source"), target: $(this).attr("target")}};
     var data = $(this).find("data").each(function () {
       var attrName = $(this).attr("key");
@@ -80,7 +79,39 @@ function getJSONFromGraphML(formattedGraphMLString) {
   return elesJson;
 
 }
+function getFilesFromXML(xml) {
+  var files = [];
+  $(xml).find("property").each(function () {
+    var key = {links: {link: "netbio.bgu.ac.il" + $(this).attr("value"), value: $(this).attr("id")}};
+    files.push(key);
+  });
+  files[0].contents = {link: "", value: "The target-set file"};
+  files[1].contents = {link: "", value: "The source-set file"};
+  files[2].contents = {link: "", value: "This files contains the number of times nodes came up in randomization runs"};
+  files[3].contents = {link: "", value: "This file contains all the edges in csv format"};
+  files[4].contents = {
+    links: "",
+    value: "This file contains a list of the nodes selected to be in source/target set in the renomination's"
+  };
+  return files;
+
+}
+function getSummaryFromXML(xml) {
+  var summary = [];
+  $(xml).find("property").each(function () {
+    var key = {property: {link: "", value: $(this).attr("id")}, valueColumn: {link: "", value: $(this).attr("value")}};
+    summary.push(key);
+  });
+  return summary;
+
+}
+function getChemicalsFromXML(xml){
+
+}
 export default {
+  getChemicalsFromXML:getChemicalsFromXML,
+  getSummaryFromXML: getSummaryFromXML,
+  getFilesFromXML: getFilesFromXML,
   getJSONFromGraphML: getJSONFromGraphML,
   getXMLFromString: getXMLFromString,
   getSessionsFromXML: getSessionsFromXML

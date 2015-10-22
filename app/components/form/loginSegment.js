@@ -5,7 +5,6 @@ import SemanticMessage from '../common/semanticMessage';
 var LoginSegment = React.createClass({
   userLoginHandler(){
     var userName = React.findDOMNode(this.refs.userNameField).value;
-    console.log(userName);
     if (userName !== "undefined" && userName !== "") {
       localStorage.userName = userName;
       this.props.onClick(true);

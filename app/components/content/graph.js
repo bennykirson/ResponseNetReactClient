@@ -1,13 +1,22 @@
 import React from 'react';
-import { getSessionsFromXML, getXMLFromString ,getJSONFromGraphML} from '../../utilities';
+import { getChemicalsFromXML,getSummaryFromXML,getFilesFromXML,getSessionsFromXML, getXMLFromString ,getJSONFromGraphML} from '../../utilities';
 import getXML from "../../api/api";
 import R from "ramda";
 import CytoscapeComponent from '../graph/cytoscapeComponent';
 import TabberComponent from '../graph/TabberComponent';
 
+//Start Tabs import s
 import PropertiesTab from '../tabber/propertiesTab';
+import GraphOptionsTab from '../tabber/graphOptionsTab';
+import FilesTab from '../tabber/filesTab';
+import ChemicalsTab from '../tabber/chemicalsTab';
+import GeneOntologyTab from '../tabber/geneOntologyTab';
+import LayersTab from '../tabber/layersTab';
+import LogTab from '../tabber/logTab';
+import SummaryTab from '../tabber/summaryTab';
+//End Tabs imports
 
-//REACT TAB CHECK
+
 import ReactTabs  from 'react-tabs';
 var Tab = ReactTabs.Tab;
 var Tabs = ReactTabs.Tabs;
@@ -17,34 +26,66 @@ var TabPanel = ReactTabs.TabPanel;
 var Graph = React.createClass({
   getInitialState() {
     return {
+      currentIndex: 0,
       graph: {},
       isLoaded: false,
-      selectedNodes:[],
-      selectedEdges:[]
+      selectedNodes: [],
+      selectedEdges: [],
+      loadedFiles: [],
+      loadedSummary: []
     };
   },
-  handleSelect (index, last) {
-    console.log('Selected tab: ' + index + ', Last tab: ' + last);
+  getFiles(){
+    var data = [localStorage.GUID, localStorage.jobName, localStorage.userName];
+    getXML("GetLinksForJob", data).fork(R.noop, (res) => {
+      var parsed = JSON.parse(res.text);
+      var files = getFilesFromXML(getXMLFromString(parsed.result));
+      this.setState({
+        loadedFiles: files
+      });
+    });
+  },
+  getSummary(){
+    var data = [localStorage.GUID, localStorage.jobName, localStorage.userName];
+    getXML("GetGraphSummary", data).fork(R.noop, (res) => {
+      var parsed = JSON.parse(res.text);
+      var summary = getSummaryFromXML(getXMLFromString(parsed.result));
+      this.setState({
+        loadedSummary: summary
+      });
+    });
+
+
+  },
+  getChemicals(){
+
   },
   componentWillMount() {
     if (localStorage.userName) {
+      localStorage.jobName = this.props.params.sessionName;
+      localStorage.GUID = this.props.params.sessionId;
       var data = [this.props.params.sessionId, localStorage.userName];
       getXML("LoadSession", data).fork(R.noop, (res) => {
         var parsed = JSON.parse(res.text);
-        var data = getJSONFromGraphML(getXMLFromString(parsed.result));
+        var parsedGraph = getJSONFromGraphML(getXMLFromString(parsed.result));
 
         this.setState({
-          graph: data,
+          graph: parsedGraph,
           isLoaded: true
         });
       });
 
     }
   },
-  onChangeSelection(nodes,edges){
+  handleSelected(index, last) {
     this.setState({
-      selectedNodes:nodes,
-      selectedEdges:edges
+      currentIndex: index
+    });
+  },
+  onChangeSelection(nodes, edges){
+    this.setState({
+      selectedNodes: nodes,
+      selectedEdges: edges
     });
   }
 
@@ -63,8 +104,7 @@ var Graph = React.createClass({
                   <div className="ui segment container tabber-size">
                     <Tabs
                         onSelect={this.handleSelected}
-                        selectedIndex={0}
-                        >
+                        selectedIndex={this.state.currentIndex}>
                       <TabList>
                         <Tab>Properties</Tab>
                         <Tab>Layers</Tab>
@@ -82,22 +122,22 @@ var Graph = React.createClass({
                         <h2>Hello from Bar</h2>
                       </TabPanel>
                       <TabPanel>
-                        <h2>Hello from Baz</h2>
+                        <GeneOntologyTab />
                       </TabPanel>
                       <TabPanel>
-                        <h2>Hello from Baz2</h2>
+                        <ChemicalsTab getChemicals={this.getChemicals} />
                       </TabPanel>
                       <TabPanel>
-                        <h2>Hello from Baz3</h2>
+                        <SummaryTab getSummary={this.getSummary} summary={this.state.loadedSummary}/>
                       </TabPanel>
                       <TabPanel>
-                        <h2>Hello from Baz4</h2>
+                        <FilesTab files={this.state.loadedFiles} getFiles={this.getFiles}/>
                       </TabPanel>
                       <TabPanel>
                         <h2>Hello from Baz5</h2>
                       </TabPanel>
                       <TabPanel>
-                        <h2>Hello from Baz6</h2>
+                        <GraphOptionsTab />
                       </TabPanel>
                     </Tabs>
                   </div>

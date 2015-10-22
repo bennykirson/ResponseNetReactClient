@@ -1,13 +1,48 @@
 import React from 'react';
+import {  map, mapObjIndexed } from 'ramda';
 import QTipPopup from '../common/qtipPopup';
-import DataGrid from 'react-datagrid';
-import TableRow from './tableRow';
+import TableWrapper from '../table/tableWrapper';
 
 var PropertiesTab = React.createClass({
+  linkyfyData(keyName,value){
+    if (keyName === "commonName" || keyName === "ENSG" || keyName === "Entrez" || keyName === "sourceNode" || keyName === "targetNode") {
+      return "http://www.ncbi.nlm.nih.gov/gene/?term="+value;
+    } else {
+      return "";
+    }
+  },
   render() {
     var {nodes,edges,...other}=this.props;
-    var nodesContent = nodes.map((item, i) => <TableRow key={ i } data={ item } />);
-    var edgesContent = edges.map((item, i) => <TableRow key={ i } data={ item } />);
+
+    var newNode = mapObjIndexed((value, key, object) => {
+      return {
+        value: value,
+        link: this.linkyfyData(key,value)
+      };
+    });
+    var createNewObjects = map(newNode);
+    var newNodes = createNewObjects(nodes);
+    var newEdges = createNewObjects(edges);
+
+    var nodeHeaders = [
+      {name: "Common Name", id: "commonName"},
+      {name: "ENSG", id: "ENSG"},
+      {name: "Entrez", id: "Entrez"},
+      {name: "Random Source", id: "RandomSource"},
+      {name: "Random Target", id: "RandomTarget"},
+      {name: "Random Predicted", id: "RandomPredicted"},
+      {name: "Incoming Flow", id: "incomingFlow"}
+    ];
+
+    var edgeHeaders = [
+      {name: "Source Node", id: "sourceNode"},
+      {name: "Target Node", id: "targetNode"},
+      {node: "Weight", id: "weight"},
+      {name: "Type", id: "type"},
+      {name: "Flow", id: "flow"},
+      {name: "Random", id: "random"}
+    ];
+
     return (
         <div>
           <h4>Properties for selected nodes and edges <QTipPopup
@@ -17,22 +52,7 @@ var PropertiesTab = React.createClass({
                 <h5>Nodes:</h5>
 
                 <div className="horizontal-scrollable vertical-scrollable">
-                  <table className="ui celled striped selectable table">
-                    <thead>
-                    <tr>
-                      <th>CommonName</th>
-                      <th>ENSG</th>
-                      <th>Entrez</th>
-                      <th>RandomSource</th>
-                      <th>RandomTarget</th>
-                      <th>RandomPredicted</th>
-                      <th>IncomingFlow</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {nodesContent}
-                    </tbody>
-                  </table>
+                  <TableWrapper headers={nodeHeaders} rows={newNodes}/>
                 </div>
               </div>
           ) : (
@@ -40,52 +60,16 @@ var PropertiesTab = React.createClass({
           )}
           {edges.length > 0 ? (
               <div>
+                <br/>
                 <h5>Edges:</h5>
 
-                <div className="vertical-scrollable">
-                  <table className="ui celled striped selectable table">
-                    <thead>
-                    <tr>
-                      <th>SourceNode</th>
-                      <th>TargetNode</th>
-                      <th>Weight</th>
-                      <th>Type</th>
-                      <th>Flow</th>
-                      <th>Random</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                  {edgesContent}
-
-                    </tbody>
-                  </table>
+                <div className="horizontal-scrollable vertical-scrollable">
+                  <TableWrapper headers={edgeHeaders} rows={newEdges}/>
                 </div>
               </div>
           ) : (
               <div/>
           )}
-          {edges.length === 0 && nodes.length === 0 ? (
-              <div>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-              </div>
-          ) : (
-              <div/>
-          )}
-
         </div>
     );
   }

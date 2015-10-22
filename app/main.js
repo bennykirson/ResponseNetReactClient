@@ -25,7 +25,7 @@ var routes = (
       <Route path="home" component={ Home }/>
       <Route path="login" component={ Login }/>
       <Route path="load-session" component={ LoadSession }/>
-      <Route path="graph/:sessionId" component={ Graph }/>
+      <Route path="graph/:sessionId/:sessionName" component={ Graph }/>
 
 
     </Route>
