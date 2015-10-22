@@ -18,6 +18,10 @@ var Home = React.createClass({
       isInteractomeFileInputDisabled: true,
       isProteinFileInputGreen: false,
       isGeneFileInputGreen: false,
+      isInteractionsDisabled: true,
+      shouldRunShortestPath: false,
+      shouldRandomize: false,
+      interactionsTextAreaValue: '',
       fileTag1: "Upload File",
       fileTag2: "Upload File"
     };
@@ -28,8 +32,9 @@ var Home = React.createClass({
       option
     });
   },
+
   onFileUploadHandler(value){
-    "use strict";
+
 
   },
   onSearchChange(value) {
@@ -46,20 +51,40 @@ var Home = React.createClass({
   onFileInputToggleHandler(buttonId){
     switch (buttonId) {
       case "source-file":
-        this.setState({isProteinFileInputDisabled: !this.state.isProteinFileInputDisabled});
+        this.setState({
+          isProteinFileInputDisabled: !this.state.isProteinFileInputDisabled
+        });
         break;
       case "target-file":
-        this.setState({isGeneFileInputDisabled: !this.state.isGeneFileInputDisabled});
+        this.setState({
+          isGeneFileInputDisabled: !this.state.isGeneFileInputDisabled
+        });
         break;
       case "interactomeFileUpload":
-        this.setState({isInteractomeFileInputDisabled: !this.state.isInteractomeFileInputDisabled});
+        this.setState({
+          isInteractomeFileInputDisabled: !this.state.isInteractomeFileInputDisabled
+        });
         break;
     }
   },
+
+  onInteractionsHandler() {
+    this.setState({isInteractionsDisabled: !this.state.isInteractionsDisabled});
+  },
+
+  onInteractionsInputChange(value) {
+    this.setState({interactionsTextAreaValue: value});
+  },
+
+  shouldRandomizeHandler() {
+    this.setState({shouldRandomize: !this.state.shouldRandomize});
+  },
+
+  shouldRunShortestPathHandler() {
+    this.setState({shouldRunShortestPath: !this.state.shouldRunShortestPath});
+  },
+
   render() {
-
-
-
 
     //FIXME MOVE ALL THE VARIABLES TO SOMEOTHER PLACE \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     //FIXME MOVE ALL THE VARIABLES TO SOMEOTHER PLACE \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
@@ -71,8 +96,8 @@ var Home = React.createClass({
       maxName: "larger network",
       minValue: 1,
       maxValue: 50,
-      defaultValue:1,
-      step:1,
+      defaultValue: 1,
+      step: 1,
       qtip: {
         content: "Control size of the output network (range 0-100)",
         title: ""
@@ -84,8 +109,8 @@ var Home = React.createClass({
       maxName: "longer paths",
       minValue: 0,
       maxValue: 1,
-      defaultValue:0,
-      step:0.1,
+      defaultValue: 0,
+      step: 0.1,
       qtip: {
         content: "Controls path lengths of output network paths (range 0-1)",
         title: ""
@@ -205,46 +230,44 @@ var Home = React.createClass({
                                      isDisabled={this.state.isGeneFileInputDisabled}
                                      isPositive={this.state.isGeneFileInputGreen} buttonId="target-file"/></div>
             </div>
-            <h3 className="ui header dividing ">
-              Enter job details
-            </h3>
 
-            <div className="inline fields">
-              <div className="ui field required">
-                <label htmlFor="job-name-input">Job name:<QTipPopup content="Allows you to access the job later.
-" title=""/></label>
-                <input className="ui fluid input" id="job-name-input" type="text" placeholder="Enter job name..."/>
-              </div>
+            <h3 className="ui dividing header">Enter job details</h3>
 
+            <div className="inline field required">
+              <label htmlFor="job-name-input">Job name:<QTipPopup content="Allows you to access the job later." title=""/></label>
+              <input className="ui fluid input"
+                     id="job-name-input"
+                     type="text"
+                     placeholder="Enter job name..."/>
             </div>
-            <div className="inline fields">
+
+            <div className="inline field">
               <label htmlFor="job-description-input">Job description (Optional):</label>
-
-              <div className="nine wide field">
-                <input className="ui fluid input" id="job-description-input" type="text"
-                       placeholder="Enter job description..."/>
-              </div>
+              <input className="ui fluid input"
+                     id="job-description-input"
+                     type="text"
+                     placeholder="Enter job description..."/>
             </div>
+
             <div className="ui dividing header">
-              <a tabIndex='0' onClick={this.onMoreOptions}>More Options</a>
+              <a tabIndex='0' onClick={ this.onMoreOptions }>More Options</a>
             </div>
-            {this.state.showMoreOptions == true ? (
-                <MoreOptions onChange={this.onFileInputToggleHandler}
-                             isDisabled={this.state.isInteractomeFileInputDisabled} gammaFormSliderOptions={gammaSlider}
-                             cappingFormSliderOptions={cappingSlider}/>
-            ) : (
-                <div/>
-            )}
 
-
-            //FIXME
-            //FIXME
-            //FIXME
-            //FIXME
-
+            {this.state.showMoreOptions && (
+                <MoreOptions onChange={ this.onFileInputToggleHandler }
+                             onInteractionsToggle={ this.onInteractionsHandler }
+                             onInteractionsInputChange={ this.onInteractionsInputChange }
+                             isDisabled={ this.state.isInteractomeFileInputDisabled }
+                             isInteractionsDisabled={ this.state.isInteractionsDisabled }
+                             gammaFormSliderOptions={ gammaSlider }
+                             cappingFormSliderOptions={ cappingSlider }
+                             shouldRandomize={ this.state.shouldRandomize }
+                             shouldRunShortestPath={ this.state.shouldRunShortestPath }
+                             onShouldRandomize={ this.shouldRandomizeHandler }
+                             onShouldRunShortestPath={ this.shouldRunShortestPathHandler }/>)
+            }
           </div>
         </div>
-
     );
   }
 });

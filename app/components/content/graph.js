@@ -42,7 +42,12 @@ var Graph = React.createClass({
     }
   },
   onChangeSelection(nodes,edges){
+    this.setState({
+      selectedNodes:nodes,
+      selectedEdges:edges
+    });
   }
+
   ,
 
   render() {
@@ -55,7 +60,7 @@ var Graph = React.createClass({
                                                                         onChange={this.onChangeSelection}/>
                 </div>
                 <div className="ui six wide column">
-                  <div className="ui segment container">
+                  <div className="ui segment container tabber-size">
                     <Tabs
                         onSelect={this.handleSelected}
                         selectedIndex={0}
@@ -71,7 +76,7 @@ var Graph = React.createClass({
                         <Tab>Graph Options</Tab>
                       </TabList>
                       <TabPanel>
-                        <PropertiesTab nodes={[]} edges={[]}/>
+                        <PropertiesTab nodes={this.state.selectedNodes} edges={this.state.selectedEdges}/>
                       </TabPanel>
                       <TabPanel>
                         <h2>Hello from Bar</h2>

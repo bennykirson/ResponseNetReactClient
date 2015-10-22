@@ -144,3 +144,6 @@ a:hover {
     max-height: 30em;
     overflow: scroll;
 }
+.tabber-size{
+    height: 60em;
+}

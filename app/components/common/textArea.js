@@ -3,12 +3,18 @@ import QTipPopup from './qtipPopup';
 
 var TextArea = React.createClass({
   render() {
-    var { label ,value,qtip,id }=this.props;
+    var { label, value, qtip, id, rows, disabled, ...other }=this.props;
     return (
 
-        <label >{label}<QTipPopup content={qtip.content} title={qtip.title}/>
-
-          <textarea rows="3" id={id} value={value}></textarea>
+        <label >
+          {label}
+          { qtip && <QTipPopup content={qtip.content} title={qtip.title}/> }
+          <textarea className={ "ui input " + (disabled ? "disabled" : "") }
+                    rows={ rows || "3" }
+                    id={ id }
+                    value={ value }
+                    { ...other }>
+          </textarea>
         </label>
     );
   }

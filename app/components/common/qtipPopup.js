@@ -7,16 +7,16 @@ var QTipPopup = React.createClass({
   componentDidMount() {
     var element = React.findDOMNode(this);
     $(element).popup({
-      on: 'click',
-      inline: true,
+      on: 'hover',
       title: this.props.title,
-      content: this.props.content
+      content: this.props.content,
+      type: 'wide'
     });
   },
   render() {
     var {content,title, ...other}=this.props;
     return (
-        <span className="form-help-icon" >[?]</span>
+        <i className="help icon link icon" />
     );
   }
 });

@@ -5,7 +5,7 @@ $.fn.checkbox = SemanticUiCheckBox;
 
 var SemanticRadioItem = React.createClass({
   componentDidMount() {
-    var $element=$(React.findDOMNode(this));
+    var $element=$(React.findDOMNode(this.refs.toggler));
     $element.checkbox({
       onChange: () => {
         if (this.props.onChange) {
@@ -19,9 +19,11 @@ var SemanticRadioItem = React.createClass({
   render() {
     var {name,label,kind ,...other}=this.props;
     return kind === "toggle" ? (
-        <div className="ui toggle checkbox">
-          <label>{label}</label>
+        <div className="field">
+          <div className="ui toggle checkbox" ref="toggler">
+            <label>{label}</label>
             <input type="checkbox"/>
+          </div>
         </div>
     ) :
 
