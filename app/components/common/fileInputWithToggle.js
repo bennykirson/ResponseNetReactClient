@@ -11,7 +11,7 @@ var FileInputWithToggle = React.createClass({
     }
   },
   onSelect(value){
-    this.props.onSelect(value);
+    this.props.onSelect(value,this.props.buttonId);
 
   },
 
@@ -23,7 +23,7 @@ var FileInputWithToggle = React.createClass({
             <SemanticRadioItem label={checkboxLabel} onChange={this.onChange} kind="toggle"/>
           </div>
           <div className=" ui field">
-            <SemanticInputFile buttonId={buttonId} buttonTag={buttonTag}isDisabled={isDisabled} isPositive={isPositive} onSelect={this.onSelect}/>
+            <SemanticInputFile buttonId={buttonId} buttonTag={buttonTag} isDisabled={isDisabled} isPositive={isPositive} onSelect={this.onSelect}/>
           </div>
 
 

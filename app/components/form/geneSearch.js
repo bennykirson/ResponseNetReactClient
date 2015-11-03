@@ -19,12 +19,12 @@ var GeneSearch = React.createClass({
 
     return newResults;
   },
+
   componentDidUpdate() {
     $(React.findDOMNode(this)).search('refresh');
   },
 
   componentDidMount() {
-
     var element = React.findDOMNode(this);
 
     $(element)
@@ -41,8 +41,9 @@ var GeneSearch = React.createClass({
             }
           },
           onSelect: (value) => {
+            $(React.findDOMNode(this)).search('set value');
+
             this.props.onChange(value.symbol);
-            $(element).search('set value', '');
 
           }
         }

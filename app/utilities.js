@@ -1,4 +1,5 @@
 import $ from "jquery";
+import {mapObjIndexed} from 'ramda';
 /**
  * (when loading a session from server, this is a list of all sessions)
  * @param sessionXML XML representing the sessions names and stuff
@@ -43,7 +44,16 @@ function getXMLFromString(formattedGraphMLString) {
   return xmlDocument;
 }
 
+function generateGUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 function getJSONFromGraphML(formattedGraphMLString) {
+  console.log(formattedGraphMLString);
+
   var elesJson = {nodes: [], edges: []};
   var dataSchema = {nodes: [], edges: []};
 
@@ -76,23 +86,63 @@ function getJSONFromGraphML(formattedGraphMLString) {
   console.log("data");
   console.log(elesJson);
 
-  return elesJson;
+  return {schema: dataSchema, elements: elesJson};
 
 }
 function getFilesFromXML(xml) {
   var files = [];
+
   $(xml).find("property").each(function () {
-    var key = {links: {link: "netbio.bgu.ac.il" + $(this).attr("value"), value: $(this).attr("id")}};
+    var key = {
+      links: {link: "netbio.bgu.ac.il" + $(this).attr("value"), value: $(this).attr("id")}
+    };
     files.push(key);
+
   });
-  files[0].contents = {link: "", value: "The target-set file"};
-  files[1].contents = {link: "", value: "The source-set file"};
-  files[2].contents = {link: "", value: "This files contains the number of times nodes came up in randomization runs"};
-  files[3].contents = {link: "", value: "This file contains all the edges in csv format"};
-  files[4].contents = {
-    links: "",
-    value: "This file contains a list of the nodes selected to be in source/target set in the renomination's"
-  };
+  for (var i = 0; i < files.length; i++) {
+    var name = files[i].links.value;
+    switch (name) {
+      case "target.txt":
+      {
+        files[i].contents = {link: "", value: "The target-set file"};
+        break;
+      }
+      case "source.txt":
+      {
+        files[i].contents = {link: "", value: "The source-set file"};
+        break;
+      }
+      case "cytoscapeEdges.csv":
+      {
+        files[i].contents = {
+          link: "",
+          value: "This files contains the number of times nodes came up in randomization runs"
+        };
+        break;
+      }
+      case "nodes.txt":
+      {
+        files[i].contents = {link: "", value: "This file contains all the edges in csv format"};
+        break;
+      }
+      case "nodesData.csv":
+      {
+        files[i].contents = {
+          link: "",
+          value: "This file contains a list of the nodes selected to be in source/target set in the renomination's"
+        };
+        break;
+      }
+      default:
+      {
+        files[i].contents = {
+          link: "",
+          value: ""
+        };
+        break;
+      }
+    }
+  }
   return files;
 
 }
@@ -105,11 +155,134 @@ function getSummaryFromXML(xml) {
   return summary;
 
 }
-function getChemicalsFromXML(xml){
+function getChemicalsFromXML(xml) {
+  console.log("inside getChemicalsFromXML");
+  console.log(xml);
+  var data = [];
+  $(xml).find("node").each(function () {
+    var key = {id: $(this).attr("id")};
+    var children = [];
+    $(this).find("stitch").each(function () {
+      children.push($(this).text());
+    });
+    key["children"] = children;
+    data.push(key);
+  });
+  return data;
 
 }
+function getGraphMLFromData(schema, elements) {
+  var ans = "<graph>";
+  schema.nodes.map((node) => {
+    node = "<key for=\"nodes\" id=\"" + node.name + "\" attr.name=\"" + node.name + "\" attr.type=\"" + node.type + "\" ></key>";
+    ans = ans + node;
+  });
+  schema.edges.map((edge) => {
+    edge = "<key for=\"edges\" id=\"" + edge.name + "\" attr.name=\"" + edge.name + "\" attr.type=\"" + edge.type + "\" ></key>";
+    ans = ans + edge;
+  });
+  elements.nodes.map((obj)=> {
+    var node = obj.data;
+    var xmlNode = "<node id=\"" + node.id + "\">";
+    for (var key in node) {
+      if (key !== "id") {
+        if (node.hasOwnProperty(key)) {
+          xmlNode = xmlNode + "<data key=\"" + key + "\">" + node[key] + "</data>";
+        }
+      }
+    }
+    xmlNode = xmlNode + "</node>";
+    ans = ans + xmlNode;
+  });
+  elements.edges.map((obj)=> {
+    var edge = obj.data;
+    var xmlEdge = "<edge source=\"" + edge.source + "\" target=\"" + edge.target + "\">";
+    for (var key in edge) {
+      if (key !== "source" && key !== "target") {
+        if (edge.hasOwnProperty(key)) {
+          xmlEdge = xmlEdge + "<data key=\"" + key + "\">" + edge[key] + "</data>";
+        }
+      }
+    }
+    xmlEdge = xmlEdge + "</edge>";
+    ans = ans + xmlEdge;
+  });
+  ans = ans + "</graph></graphml>";
+  return ans;
+}
+function getGeneOntologyFromXML(xml) {
+  console.log("inside GO function");
+  console.log(xml);
+
+  var data = [];
+  $(xml).find("node").each(function () {
+    var key = {name: $(this).attr("id")};
+    var children = [];
+    $(this).find("set").each(function () {
+      var setName = $(this).attr("name");
+      var setKey = {};
+      var innderData = [];
+      switch (setName) {
+        case "Description":
+        {
+          $(this).find("go").each(function () {
+            setKey["id"] = setName;
+            setKey["value"] = $(this).text();
+          });
+          break;
+        }
+        case "Biological Process":
+        {
+          setKey["id"] = setName;
+          $(this).find("go").each(function () {
+            innderData.push({link: $(this).attr("id"), text: $(this).text()});
+          });
+          setKey["value"] = innderData;
+          break;
+        }
+        case "Cellular Component":
+        {
+          setKey["id"] = setName;
+          $(this).find("go").each(function () {
+            innderData.push({link: $(this).attr("id"), text: $(this).text()});
+          });
+          setKey["value"] = innderData;
+          break;
+        }
+        case "Mulecular Function":
+        {
+          setKey["id"] = setName;
+
+          $(this).find("go").each(function () {
+            innderData.push({link: $(this).attr("id"), text: $(this).text()});
+          });
+          setKey["value"] = innderData;
+          break;
+        }
+        default:
+        {
+          console.log("default in getGeneOntologyFromXML case");
+        }
+
+      }
+      children.push(setKey);
+    });
+    key["children"] = children;
+    data.push(key);
+
+
+  });
+  console.log(data);
+  return data;
+}
+
+
 export default {
-  getChemicalsFromXML:getChemicalsFromXML,
+
+  generateGUID: generateGUID,
+  getGeneOntologyFromXML: getGeneOntologyFromXML,
+  getGraphMLFromData: getGraphMLFromData,
+  getChemicalsFromXML: getChemicalsFromXML,
   getSummaryFromXML: getSummaryFromXML,
   getFilesFromXML: getFilesFromXML,
   getJSONFromGraphML: getJSONFromGraphML,

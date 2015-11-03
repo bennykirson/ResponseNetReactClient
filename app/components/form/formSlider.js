@@ -3,20 +3,9 @@ import Slider from 'react-rangeslider';
 import QTipPopup from '../common/qtipPopup';
 
 var FormSlider = React.createClass({
-  getInitialState() {
-    return {
-      value: this.props.options.defaultValue,
-      sliderText:this.props.options.defaultValue.toFixed(1)
-
-    };
-  },
-
 
   handleChangeValue(newValue) {
-    this.setState({
-      value: newValue,
-      sliderText:newValue.toFixed(1)
-    });
+    this.props.onChange(newValue);
   },
 
 
@@ -38,7 +27,7 @@ var FormSlider = React.createClass({
                   min={options.minValue}
                   max={options.maxValue}
                   step={options.step}
-                  value={this.state.value}
+                  value={options.defaultValue}
                   onChange={this.handleChangeValue}/>
 
             </div>
@@ -48,7 +37,7 @@ var FormSlider = React.createClass({
             </div>
 
             <div className=" two wide column">
-              <div className="ui blue basic label">{this.state.sliderText}</div>
+              <div className="ui blue basic label">{options.defaultValue.toFixed(2)}</div>
 
 
             </div>

@@ -8,7 +8,6 @@ var SemanticDropdown = React.createClass({
     $(React.findDOMNode(this)).dropdown({
       onChange: (value) => {
         if (this.props.onChange) {
-          $("#network").dropdown("restore defaults");
           this.props.onChange(value);
 
         }
@@ -28,7 +27,7 @@ var SemanticDropdown = React.createClass({
           <i className="dropdown icon"></i>
 
           <div className="menu">
-            {items.map((item, i) => <div className="ui item" key={i} data-value={item.attrValue}>{item.name}</div>)}
+            {items.map((item, i) => <div className="ui item" data-value={item.attrValue}>{item.name}</div>)}
           </div>
 
         </div>

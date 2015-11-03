@@ -10,6 +10,8 @@ var FilesTab = React.createClass({
   render() {
     var {files,...other}=this.props;
     var fileHeaders = [{name: "Links", id: "links"}, {name: "Content", id: "contents"}];
+    console.log(files);
+
     return files.length === 0 ? (
         <div/>
     ) : (

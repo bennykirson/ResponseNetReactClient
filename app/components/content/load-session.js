@@ -17,6 +17,8 @@ var LoadSessions = React.createClass({
       getXML("GetSessions", localStorage.userName).fork(R.noop, (res) => {
         var parsed = JSON.parse(res.text);
         var jsonSessions = getSessionsFromXML(getXMLFromString(parsed.result));
+
+
         this.setState({
           jsonSessions,
           isLoaded: true

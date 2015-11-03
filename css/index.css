@@ -111,18 +111,18 @@ a:hover {
  * Rangeslider - Horizontal slider
  */
 .rangeslider-horizontal {
-    height: 20px;
-    border-radius: 10px;
+    height: 18px;
+    border-radius: 9px;
 }
 .rangeslider-horizontal .rangeslider__fill {
     height: 100%;
-    background: #27ae60;
+    background: #4e5bff;
     border-radius: 10px;
     top: 0;
 }
 .rangeslider-horizontal .rangeslider__handle {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 40px;
     top: -10px;
 }
@@ -144,6 +144,13 @@ a:hover {
     max-height: 24em;
     overflow: scroll;
 }
+.vertical-scrollable-tab{
+    height: 50em;
+    max-height: 50em;
+    overflow: scroll;
+
+
+}
 .tabber-size{
     height: 66em;
     max-height: 100em;
@@ -162,6 +169,7 @@ a:hover {
 .node:hover {
     background-color: rgb(220, 245, 243);
     cursor: pointer;
+
 }
 
 .info, .node {
@@ -195,7 +203,7 @@ a:hover {
 
 /* style for the children nodes container */
 .tree-view_children {
-    margin-left: 16px;
+    margin-left: 25px;
 }
 
 .tree-view_children-collapsed {

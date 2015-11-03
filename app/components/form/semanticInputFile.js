@@ -7,15 +7,14 @@ var SemanticInputFile = React.createClass({
     var file = findDOMNode(this.refs.fileInput).files;
     console.log(file);
     if (file.length > 0) {
-      this.props.onSelect(true);
+      this.props.onSelect(file);
     }else{
       this.props.onSelect(false);
     }
   },
   render() {
-    var {isDisabled,isPositive,buttonId,buttonTag,fileName,...other}=this.props;
+    var {isDisabled,isPositive,buttonId,buttonTag,fileName,location,...other}=this.props;
     var classes = ClassNames('ui icon file-button button', {disabled: isDisabled, positive: isPositive});
-
     return (
         <div className={classes} id={buttonId}>
           <i className="file outline icon"></i> {buttonTag}

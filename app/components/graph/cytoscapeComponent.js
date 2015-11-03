@@ -11,11 +11,69 @@ var CytoscapeComponent = React.createClass({
         return false;
       },
       componentWillReceiveProps(nextProps) {
-        /* var currentProp1 = this.props.prop1;
-         var nextProp1 = nextProps.prop1;
-         if (currentProp1 != nextProp1) {
-         this.cytoscapeInstance.doSomething();
-         }*/
+        var layout = nextProps.layout.toLowerCase();
+        if (this.props.layout != layout) {
+          if (layout == 'concentric') {
+            var options = {
+              name: 'concentric',
+
+              fit: true, // whether to fit the viewport to the graph
+              startAngle: 3 / 2 * Math.PI, // the position of the first node
+              minNodeSpacing: 10, // min spacing between outside of nodes (used for radius adjustment)
+              avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+              concentric: function () { // returns numeric value for each node, placing higher nodes in levels towards the centre
+                return this.degree();
+              },
+              levelWidth: function (nodes) { // the variation of concentric values in each level
+                return nodes.maxDegree() / 4;
+              }
+            };
+
+            this.cy.layout(options);
+          } else if (layout == 'tree') {
+            //First draw the graph in a breadthfirst manner, after that draw it with backtracking
+            //avoids random nodes not in the correct position.
+            var breadthFirstLayout = this.cy.makeLayout({
+              name: 'breadthfirst',
+              fit: true, // whether to fit the viewport to the graph
+              directed: true, // whether the tree is directed downwards (or edges can point in any direction if false)
+              circle: false, // put depths in concentric circles if true, put depths top down if false
+              avoidOverlap: true,
+              ready: () => {
+                var numOfNodes = (this.cy.$('node').length);
+                var options = {
+                  name: 'breadthfirst',
+                  fit: true,
+                  padding: 30,
+                  directed: true,
+                  circle: false,
+                  avoidOverlap: true,
+                  maximalAdjustments: numOfNodes
+                };
+                this.cy.layout(options);
+              }
+            });
+            breadthFirstLayout.run();
+
+          } else {
+            this.cy.layout({name: layout});
+
+          }
+
+        }
+        if (nextProps.initiateRemove) {
+          this.removeNodes();
+        }
+
+
+      },
+      removeNodes(){
+        if (this.cy.$(":selected").length > 0) {
+          this.cy.remove(":selected");
+          var nodes = this.cy.$("node").map((element) => element._private.data);
+          var edges = this.cy.$("edge").map((element) => element._private.data);
+          this.props.removeNodes(nodes, edges);
+        }
       },
       componentDidMount() {
         var element = React.findDOMNode(this);
@@ -161,7 +219,7 @@ var CytoscapeComponent = React.createClass({
       {
         var nodes = this.cy.nodes(":selected").map((element) => element._private.data);
         var edges = this.cy.edges(":selected").map((element) => element._private.data);
-        this.props.onChange(nodes,edges);
+        this.props.onChange(nodes, edges);
       }
       ,
       attachListeners()
@@ -192,7 +250,28 @@ var CytoscapeComponent = React.createClass({
             this.cy.$(":selected").unselect();
             node.select();
           }
-        })
+        });
+
+        this.cy.on("taphold", 'node', (evt)=> {
+          var node = evt.cyTarget;
+          //2 for edges and nodes +1 for the current node
+          var numberToSelect = (node.outdegree()) * 2 + 1;
+
+          var eventNode = node._private;
+          //Gather all nodes
+          var bfs = this.cy.elements().bfs('#' + eventNode.data.id, function () {
+          }, true);
+          var i = 0;
+          var highlightNextEle = function () {
+            if (i < numberToSelect) {
+              bfs.path[i].select();
+              i++;
+              highlightNextEle();
+            }
+          };
+          // kick off first highlight
+          highlightNextEle();
+        });
 
       },
       attachQtip(){
@@ -233,89 +312,76 @@ var CytoscapeComponent = React.createClass({
             text: 'Change Layout', subMenu: [
             {header: 'Layouts'},
             {
-              text: 'Random', action: function (event) {
-              event.preventDefault();
-              // changeLayoutTab('random', {});
+              text: 'Random', action: (e) => {
+              e.preventDefault();
+              this.props.changeLayout("random");
             }
             },
             {
-              text: 'Grid', action: function (event) {
-              event.preventDefault();
-              // changeLayoutTab('grid', {});
+              text: 'Grid', action: (e) => {
+              e.preventDefault();
+              this.props.changeLayout('grid');
             }
             },
             {
-              text: 'Circle', action: function (event) {
-              event.preventDefault();
-              // changeLayoutTab('circle', {});
+              text: 'Circle', action: (e) => {
+              e.preventDefault();
+              this.props.changeLayout('circle');
             }
             },
             {
-              text: 'Concentric', action: function (event) {
-              event.preventDefault();
-              // changeLayoutTab('concentric', {});
+              text: 'Concentric', action: (e) => {
+              e.preventDefault();
+              this.props.changeLayout('concentric');
             }
             },
             {
-              text: 'Tree', action: function (event) {
-              event.preventDefault();
-              //  changeLayoutTab('breadthfirst', {});
+              text: 'Tree', action: (e) => {
+              e.preventDefault();
+              this.props.changeLayout('tree');
             }
             }
           ]
           },
           {
-            text: 'New layer from selected', action: function (event) {
-            event.preventDefault();
-            // addLocalSubgraph();
+            text: 'New layer from selected', action: (e) => {
+            e.preventDefault();
+            this.props.newLayerFromSelected();
           }
           },
 
           {
-            text: 'Get additional TFT', action: function (event) {
-            event.preventDefault();
+            text: 'Get additional TFT', action: (e) => {
+            e.preventDefault();
             //  additionalTFT();
           }
           },
           {
-            text: 'Remove Nodes', action: function (event) {
+            text: 'Remove Nodes', action: (e)=> {
             event.preventDefault();
-            // removeSelected();
+            this.removeNodes();
           }
           },
-          /*{
-           text: 'Restore Nodes', action: function(event) {
-           event.preventDefault();
-           restoreNodes();
-           }
-           },*/
           {
-            text: 'Save Session', action: function (event) {
-            event.preventDefault();
-            // saveSession();
+            text: 'Save Session', action: (e) => {
+            e.preventDefault();
+            this.props.saveSession();
           }
           },
           {divider: true},
 
           {
 
-            text: 'Import GraphML as layer', action: function (event) {
-            event.preventDefault();
-            // importGraphAction("graphml");
-          }
-
-          },
-          {
-
-            text: 'Export graph to GraphML', action: function (event) {
-            event.preventDefault();
-            // exportGraph("graphml");
+            text: 'Export graph to GraphML', action: (e) => {
+            e.preventDefault();
+            this.props.exportToGraphML();
           }
 
           }
 
         ]);
       },
+
       render()
       {
         var {data,...other}=this.props;

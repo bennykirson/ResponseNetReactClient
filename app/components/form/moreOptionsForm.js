@@ -7,7 +7,6 @@ import TextArea from '../common/textArea';
 import SemanticInput from '../common/semanticInput';
 var MoreOptions = React.createClass({
 
-
   render() {
     var {
         gammaFormSliderOptions,
@@ -22,6 +21,12 @@ var MoreOptions = React.createClass({
         onShouldRunShortestPath,
         shouldRandomize,
         shouldRunShortestPath,
+        onGammaChange,
+        onCappingChange,
+        randomSourceValue,
+        randomTargetValue,
+        randomBothValue,
+        onFormInputChange,
         ...other
         } = this.props;
 
@@ -48,24 +53,39 @@ var MoreOptions = React.createClass({
               <TextArea name="interactions-list"
                         rows="1"
                         disabled={ isInteractionsDisabled }
-                        onInteractionsInputChange={ onInteractionsInputChange }/>
+                        onChange={ onInteractionsInputChange }/>
             </div>
           </div>
 
 
           <div className="field">
-            <FormSlider options={gammaFormSliderOptions}/>
+            <FormSlider options={gammaFormSliderOptions} onChange={ onGammaChange }/>
           </div>
           <div className="field">
-            <FormSlider options={cappingFormSliderOptions}/>
+            <FormSlider options={cappingFormSliderOptions} onChange={ onCappingChange }/>
           </div>
           <div className="inline fields">
             <SemanticRadioItem label="Randomizations (<= 10)"
                                kind="toggle"
                                onChange={ onShouldRandomize }/>
-            <SemanticInput label="Source" size="two wide small" disabled={ !shouldRandomize }/>
-            <SemanticInput label="Target" size="two wide small" disabled={ !shouldRandomize }/>
-            <SemanticInput label="Both" size="two wide small" disabled={ !shouldRandomize }/>
+            <SemanticInput label="Source"
+                           id="jobRandomSource"
+                           size="two wide small"
+                           value={ randomSourceValue }
+                           onChange={ onFormInputChange }
+                           disabled={ !shouldRandomize }/>
+            <SemanticInput label="Target"
+                           id="jobRandomTarget"
+                           size="two wide small"
+                           value={ randomTargetValue }
+                           onChange={ onFormInputChange }
+                           disabled={ !shouldRandomize }/>
+            <SemanticInput label="Both"
+                           id="jobRandomBoth"
+                           size="two wide small"
+                           onChange={ onFormInputChange }
+                           value={ randomBothValue }
+                           disabled={ !shouldRandomize }/>
 
           </div>
           <div className="field">
