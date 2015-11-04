@@ -1,5 +1,6 @@
 import React from 'react';
 import SemanticButton from '../common/semanticButton';
+import InjectionText from '../common/injectionText';
 
 var LogoutSegment = React.createClass({
   onClick(value){
@@ -14,12 +15,13 @@ var LogoutSegment = React.createClass({
 
         <div className="ui middle aligned center aligned grid">
           <div className="six wide column">
-            <div className="ui raised very padded stacked segment">
+            <div className="ui  segment">
               <h2 className="ui teal header">
 
-               Welcome {userInjection}
+               Welcome <InjectionText>{userInjection}</InjectionText>
 
               </h2>
+              <br/>
               <SemanticButton  isDisabled={false} onClick={onClick}>
               Logout
               </SemanticButton>

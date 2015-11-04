@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { History,RouteContext,State } from 'react-router';
+import getXML from '../app/api/api';
 //components
 import MenuWrapper from './components/navigation/menuWrapper';
 import HeaderDiv from './components/headerDiv';
@@ -8,16 +9,32 @@ import FooterDiv from './components/footerDiv';
 import UpperButton from './components/common/upperButton';
 import Graph from './components/content/graph';
 
-const SAMPLEID=1111;
+const SAMPLEID = 1111;
 //TODO GET SAMPLE ID .......
 
 var App = React.createClass({
 
   mixins: [State],
+  componentWillMount() {
+    getXML("GetServerStatus", []).fork(() => this.setState({ serverRunning: false }), (res) => {
+      var parsed = JSON.parse(res.text);
+
+      parsed.result === "1" ? (
+          this.setState({
+            serverRunning: true
+          })
+      ) : (
+          this.setState({
+            serverRunning: false
+          })
+      );
+    });
+  },
 
 
   getInitialState() {
     return {
+      serverRunning: true,
       userNameInjection: "To ResponseNet 2.0",
       items: [
         {name: 'Run ResponseNet', link: 'home'},
@@ -62,7 +79,8 @@ var App = React.createClass({
   render() {
     var faqUrl = "http://netbio.bgu.ac.il/labwebsite/?q=responsenet-webserver-tutorial";
     var { items } = this.state;
-    return (<div>
+    return this.state.serverRunning ? (
+        <div>
           <a href="#form-container" tabIndex="1" className="accessibility-aid skip-link">Skip to content</a>
           <HeaderDiv />
 
@@ -76,7 +94,7 @@ var App = React.createClass({
 
           </div>
 
-          {this.props.location.pathname.substring(0,6) === '/graph' ? (
+          {this.props.location.pathname.substring(0, 6) === '/graph' ? (
               <div>
                 {this.props.children}
               </div>
@@ -95,6 +113,14 @@ var App = React.createClass({
 
           < FooterDiv />
         </div>
+    ) : (
+        <p>
+          Unfortunately, our servers are currently
+          down.
+          <br/>
+          If the problem persists please send us an email at:
+          <a href="mailto:estiyl@bgu.ac.il">estiyl@bgu.ac.il</a>
+        </p>
     )
   }
 });

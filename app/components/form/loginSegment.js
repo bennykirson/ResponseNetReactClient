@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateGUID } from '../../utils/utilities';
 import SemanticButton from '../common/semanticButton';
 import SemanticMessage from '../common/semanticMessage';
 
@@ -15,15 +16,15 @@ var LoginSegment = React.createClass({
     }
   },
   anonymousLoginHandler(){
-
-
+    localStorage.userName = "anonymous_" + generateGUID();
+    this.props.onClick(true);
   },
   render(){
     var {onClick,warningMessage,...other}=this.props;
     return (
         <div className="ui middle aligned center aligned grid">
           <div className="six wide column">
-            <div className="ui raised very padded stacked segment">
+            <div className="ui segment">
               <h2 className="ui teal header">
                 Please enter your Username:
               </h2>
@@ -32,14 +33,17 @@ var LoginSegment = React.createClass({
                 {warningMessage ? <SemanticMessage type={"error"} title={"Action Forbidden"}
                                                    content={"Username can't be empty"}/> : ""}
               </div>
+              <br/>
               <div className="ui field"><SemanticButton isDisabled={false} onClick={this.userLoginHandler}>
                 Login
               </SemanticButton>
-              </div>
 
+              </div>
+              <br/>
               OR
 
               <div className="ui field">
+                <br/>
                 <SemanticButton isDisabled={false} onClick={this.anonymousLoginHandler}>
                   Enter Anonymously
                 </SemanticButton>

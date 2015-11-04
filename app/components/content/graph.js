@@ -1,5 +1,5 @@
 import React from 'react';
-import { getGeneOntologyFromXML,getGraphMLFromData,getChemicalsFromXML,getSummaryFromXML,getFilesFromXML,getSessionsFromXML, getXMLFromString ,getJSONFromGraphML} from '../../utilities';
+import { getGeneOntologyFromXML,getGraphMLFromData,getChemicalsFromXML,getSummaryFromXML,getFilesFromXML,getSessionsFromXML, getXMLFromString ,getJSONFromGraphML} from '../../utils/utilities';
 import getXML from "../../api/api";
 import R from "ramda";
 import CytoscapeComponent from '../graph/cytoscapeComponent';
@@ -14,6 +14,8 @@ import GeneOntologyTab from '../tabber/geneOntologyTab';
 import LayersTab from '../tabber/layersTab';
 import LogTab from '../tabber/logTab';
 import SummaryTab from '../tabber/summaryTab';
+import LayerUtils from '../../utils/layerUtils';
+
 //End Tabs imports
 
 
@@ -26,6 +28,7 @@ var TabPanel = ReactTabs.TabPanel;
 const GO_TAB_INDEX = 2;
 const CHEMICALS_TAB_INDEX = 3;
 
+window.R = R; // for experimentation & debugging
 
 var Graph = React.createClass({
 
@@ -49,6 +52,7 @@ var Graph = React.createClass({
       layers: {},
       graphFiltering: "union",
       layout: "tree"
+
 
     };
   },
@@ -199,6 +203,8 @@ var Graph = React.createClass({
         var parsed = JSON.parse(res.text);
         var parsedData = getJSONFromGraphML(getXMLFromString(parsed.result));
         this.state.layers["ResponseNet"] = parsedData.elements;
+        this.state.layers["ResponseNet"].checkedNodes = true;
+        this.state.layers["ResponseNet"].checkedEdges = true;
         this.setState({
           graph: parsedData.elements,
           schema: parsedData.schema,
@@ -310,69 +316,85 @@ var Graph = React.createClass({
     }
   },
   newLayerFromSelected(){
-    var selectedNodes = this.state.selectedNodes;
-    var selectedEdges = this.state.selectedEdges;
+    var selectedNodes = this.state.selectedNodes.map((node) => {
+      return {data: node, group: "nodes"};
+    });
+    var selectedEdges = this.state.selectedEdges.map((edge) => {
+      return {data: edge, group: "edges"}
+    });
     if (selectedEdges.length === 0 && selectedNodes.length === 0) {
       alert("Please select something")
     } else {
-      var newLayers = this.state.layers;
-      newLayers["Layer-From-Selected"] = {nodes: selectedNodes, edges: selectedEdges};
+      var layers = this.state.layers;
+      var newLayers = Object.assign({}, layers);
+      var layerName = "selectedLayer" + new Date().getTime();
+      newLayers[layerName] = {nodes: selectedNodes, edges: selectedEdges};
+      newLayers[layerName].checkedNodes = true;
+      newLayers[layerName].checkedEdges = true;
       this.setState({
         layers: newLayers
       });
     }
   },
+
   handleFilterChange(target){
-    var exportGraph = this.state.layers["ResponseNet"];
-    if (this.state.layers.length > 1) {
-      switch (target) {
-        case "intersection":
-        {
 
-          var nodes = this.state.layers["Layer-From-Selected"].nodes;
-          nodes.map((node)=> {
+    var { layers } = this.state;
 
-          });
+    if (Object.keys(layers).length > 1) {
+      var { graph } = this.state;
+      var newGraph = Object.assign({}, graph);
+      var checkedNodes = LayerUtils.extractChecked('checkedNodes')(R.values(layers));
+      var checkedEdges = LayerUtils.extractChecked('checkedEdges')(R.values(layers));
 
-          break;
-        }
-        case "union":
-        {
-          this.setState({
-            graphFiltering: "intersection"
-          });
-          break;
-        }
-        case "symmetric":
-        {
-
-          break;
-        }
-
-      }
+      var nodes = LayerUtils.extractProp('nodes')(checkedNodes);
+      var edges = LayerUtils.extractProp('edges')(checkedEdges);
+      newGraph.nodes = LayerUtils[target](nodes);
+      newGraph.edges = LayerUtils[target](edges);
+      this.setState({
+        graphFiltering:target,
+        graph: newGraph
+      });
     }
 
+
   },
+
+  onLayersCheckboxChangeHandler(name, e) {
+
+    e.target.name==="nodes"?(
+        this.state.layers[name].checkedNodes= !this.state.layers[name].checkedNodes
+
+    ):(
+        this.state.layers[name].checkedEdges= !this.state.layers[name].checkedEdges
+    );
+
+     this.handleFilterChange(this.state.graphFiltering);
+  },
+
   render() {
     var {...other}=this.props;
+    console.log('graph: ', this.state.graph);
+
     return (
         <div>
           {this.state.isLoaded ? (
               <div className="ui grid">
-                <div className="ui ten wide column"><CytoscapeComponent data={this.state.graph}
-                                                                        layers={this.state.layers}
-                                                                        initiateRemove={this.state.initiateRemove}
-                                                                        onChange={this.onChangeSelection}
-                                                                        layout={this.state.layout}
-                                                                        changeLayout={this.changeLayout}
-                                                                        removeNodes={this.removeNodes}
-                                                                        getTFT={this.getTFT}
-                                                                        saveSession={this.saveSession}
-                                                                        exportToGraphML={this.exportToGraphML}
-                                                                        importGraph={this.importGraph}
-                                                                        newLayerFromSelected={this.newLayerFromSelected}
-                                                                        filtering={this.state.graphFiltering}
-                />
+                <div className="ui ten wide column">
+                  <CytoscapeComponent data={this.state.graph}
+                                      layers={this.state.layers}
+                                      initiateRemove={this.state.initiateRemove}
+                                      onChange={this.onChangeSelection}
+                                      layout={this.state.layout}
+                                      changeLayout={this.changeLayout}
+                                      removeNodes={this.removeNodes}
+                                      getTFT={this.getTFT}
+                                      saveSession={this.saveSession}
+                                      exportToGraphML={this.exportToGraphML}
+                                      importGraph={this.importGraph}
+                                      newLayerFromSelected={this.newLayerFromSelected}
+                                      filtering={this.state.graphFiltering}
+                  />
                 </div>
                 <div className="ui six wide column">
                   <div className="ui segment container tabber-size">
@@ -393,7 +415,9 @@ var Graph = React.createClass({
                         <PropertiesTab nodes={this.state.selectedNodes} edges={this.state.selectedEdges}/>
                       </TabPanel>
                       <TabPanel>
-                        <LayersTab layers={this.state.layers} handleFilterChange={this.handleFilterChange}/>
+                        <LayersTab layers={this.state.layers}
+                                   handleFilterChange={this.handleFilterChange}
+                                   onChange={ this.onLayersCheckboxChangeHandler }/>
                       </TabPanel>
                       <TabPanel>
                         <GeneOntologyTab getGO={this.getGO} GO={this.state.currentGO}/>

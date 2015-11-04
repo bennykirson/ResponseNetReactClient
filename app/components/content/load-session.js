@@ -1,5 +1,5 @@
 import React from 'react';
-import { getSessionsFromXML, getXMLFromString } from '../../utilities';
+import { getSessionsFromXML, getXMLFromString } from '../../utils/utilities';
 import getXML from "../../api/api";
 import R from "ramda";
 import SessionList from "../session/sessionList";
@@ -55,9 +55,14 @@ var LoadSessions = React.createClass({
                 }
               </div>
           ) : (
-
-              <div className="ui active inverted dimmer">
-                <div className="ui medium text loader">Sessions are loading</div>
+              <div>
+                <div className="ui active inverted dimmer">
+                  <div className="ui medium text loader">Sessions are loading</div>
+                </div>
+                <div className="ui tiny header">
+                  If you just used ResponseNet2.0 and expecting results please be patient. <br/>
+                  Try again in a few minutes.
+                </div>
               </div>
 
           )}

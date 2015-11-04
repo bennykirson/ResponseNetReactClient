@@ -3,7 +3,7 @@ import LayersRow from '../table/layersRow';
 
 var LayersTab = React.createClass({
   handleFilterChange(e){
-    var target=e.target.value;
+    var target = e.target.value;
     this.props.handleFilterChange(target);
 
   },
@@ -11,13 +11,13 @@ var LayersTab = React.createClass({
     var {layers,...other}=this.props;
     console.log(layers);
 
-    var content=[];
+    var content = [];
     for (var key in layers) {
-      var currentRow= <LayersRow name={key}/>;
-        content.push(currentRow);
+      var currentRow = <LayersRow name={key} layer={layers[key]} { ...other }/>;
+      content.push(currentRow);
     }
 
-      return (
+    return (
         <div>
           <table className="ui celled striped selectable table">
             <thead>
@@ -29,7 +29,7 @@ var LayersTab = React.createClass({
             </thead>
             <tbody>
             {content}
-            
+
 
             </tbody>
           </table>
@@ -39,19 +39,25 @@ var LayersTab = React.createClass({
             <label>Filter By</label>
             <div className="field">
               <div className="ui radio checkbox">
-                <input type="radio" value="symmetric"name="example2"/>
+                <input type="radio" value="symmetricDifference" name="filter"/>
                 <label>Show Symmetric Difference</label>
               </div>
             </div>
             <div className="field">
               <div className="ui radio checkbox">
-                <input type="radio" value="intersection" name="example2"/>
+                <input type="radio" value="difference" name="filter"/>
+                <label>Show Difference</label>
+              </div>
+            </div>
+            <div className="field">
+              <div className="ui radio checkbox">
+                <input type="radio" value="intersection" name="filter"/>
                 <label>Show Intersection</label>
               </div>
             </div>
             <div className="field">
               <div className="ui radio checkbox">
-                <input type="radio" value="union"name="example2" defaultChecked="checked"/>
+                <input type="radio" value="union" name="filter" defaultChecked="checked"/>
                 <label>Show Union</label>
               </div>
             </div>

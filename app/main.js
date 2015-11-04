@@ -31,8 +31,6 @@ var routes = (
     </Route>
 );
 
-//React.render(<Router>{routes}</Router>, document.body);
-// FIXME THIS IS THE CORRECT WAY TO DO THIS !!!!
  React.render(<Router history={history}>{routes}</Router>, document.body);
-//FIXME IT BOTHERS ME ON DEVELOPMENT
+
 

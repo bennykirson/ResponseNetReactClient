@@ -8,7 +8,7 @@ import MoreOptions from '../form/moreOptionsForm';
 import QTipPopup from '../common/qtipPopup';
 
 import getXML from '../../api/api';
-import { getSessionsFromXML, getXMLFromString ,getJSONFromGraphML, generateGUID } from '../../utilities';
+import { getSessionsFromXML, getXMLFromString ,getJSONFromGraphML, generateGUID } from '../../utils/utilities';
 
 var Home = React.createClass({
   getInitialState() {
@@ -70,7 +70,7 @@ var Home = React.createClass({
     if (fileList !== false) {
       var file = fileList[0];
       var textType = /text.*/;
-      var fileName=file.name.substr(0, file.name.lastIndexOf('.'));
+      var fileName = file.name.substr(0, file.name.lastIndexOf('.'));
       var homeComponent = this;
       if (file.type.match(textType)) {
         var reader = new FileReader();
@@ -79,14 +79,14 @@ var Home = React.createClass({
             homeComponent.setState({
               proteinFileData: reader.result,
               isProteinFileInputGreen: true,
-              fileTag1:fileName
+              fileTag1: fileName
             });
           }
           else if (buttonId === "target-file") {
             homeComponent.setState({
               geneFileData: reader.result,
               isGeneFileInputGreen: true,
-              fileTag2:fileName
+              fileTag2: fileName
             });
           }
         };
@@ -100,14 +100,14 @@ var Home = React.createClass({
         homeComponent.setState({
           proteinFileData: "",
           isProteinFileInputGreen: false,
-          fileTag1:"Upload File"
+          fileTag1: "Upload File"
         });
       }
       else if (buttonId === "target-file") {
         homeComponent.setState({
           geneFileData: "",
           isGeneFileInputGreen: false,
-          fileTag2:"Upload File"
+          fileTag2: "Upload File"
         });
 
       }
@@ -194,17 +194,24 @@ var Home = React.createClass({
   },
 
   onSubmitFormHandler() {
-    var sourceData=this.state.jobSourceFile;
-    var targetData=this.state.jobTargetFile;
-    if (this.state.isProteinFileInputGreen===true){
-      sourceData=sourceData+this.state.proteinFileData;
+    var sourceData = this.state.jobSourceFile;
+    var targetData = this.state.jobTargetFile;
+    if (this.state.isProteinFileInputGreen === true) {
+      sourceData = sourceData + this.state.proteinFileData;
     }
-    if (this.state.isGeneFileInputGreen===true){
-      targetData=targetData+this.state.geneFileData;
+    if (this.state.isGeneFileInputGreen === true) {
+      targetData = targetData + this.state.geneFileData;
+    }
+    var userName;
+    if (localStorage.userName !== undefined && localStorage.userName !== "") {
+      userName = localStorage.userName
+    } else {
+      localStorage.userName = "anonymous_" + generateGUID();
+      userName = localStorage.userName;
     }
     var data = [
       generateGUID(),
-      localStorage.userName,
+      userName,
       this.state.jobName,
       this.state.jobComments,
       this.state.jobOrganism,
