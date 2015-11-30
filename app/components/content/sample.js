@@ -1,7 +1,12 @@
 import React from 'react';
+import { History } from 'react-router';
 import { generateGUID } from '../../utils/utilities';
+import getXML from '../../api/api';
 
 var Sample = React.createClass({
+
+  mixins: [History],
+
   componentWillMount() {
     var userName;
     if (localStorage.userName) {
@@ -10,20 +15,22 @@ var Sample = React.createClass({
       localStorage.userName = "anonymous_" + generateGUID();
       userName = localStorage.userName;
     }
+    var sessionId = generateGUID();
     var data = [
-      generateGUID(), userName, "Mr_Sample", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", true
-    ]
+      sessionId, userName, "Mr_Sample", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", true
+    ];
     getXML("RunResponseNet", data).fork(R.noop, (res) => {
-      var parsed = JSON.parse(res.text);
-      var data = getJSONFromGraphML(getXMLFromString(parsed.result));
-      console.log(res);
-
+      this.history.pushState(null, `/graph/${sessionId}/Mr_Sample`);
     });
   },
 
   render() {
     return (
-        <div />
+        <div className="ui active intermediate text loader">
+          <p>
+            {'Please wait. Fetching Sample...'}
+          </p>
+        </div>
     );
   }
 });

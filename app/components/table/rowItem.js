@@ -7,7 +7,7 @@ var RowItem = React.createClass({
     return (
         <td >
           {item.link !== "" ? (
-              <a href={item.link}>{item.value}</a>
+              <a href={item.link} target="_blank">{item.value}</a>
           ) : (
               <div>
                 {item.value}

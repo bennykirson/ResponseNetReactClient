@@ -11,8 +11,7 @@ var FileInputWithToggle = React.createClass({
     }
   },
   onSelect(value){
-    this.props.onSelect(value);
-
+    this.props.onSelect(value, this.props.buttonId);
   },
 
   render() {

@@ -9,11 +9,12 @@ var LayersTab = React.createClass({
   },
   render() {
     var {layers,...other}=this.props;
-    console.log(layers);
 
     var content = [];
     for (var key in layers) {
-      var currentRow = <LayersRow name={key} layer={layers[key]} { ...other }/>;
+      var currentRow = <LayersRow name={layers[key].name} layer={layers[key]} key={key} layerKey={key}
+                                  isDisabled={layers[key].edgeCheckboxDisabled} { ...other }
+                                  onLayerNameChange={this.props.onLayerChangeName}/>;
       content.push(currentRow);
     }
 
@@ -29,8 +30,6 @@ var LayersTab = React.createClass({
             </thead>
             <tbody>
             {content}
-
-
             </tbody>
           </table>
 

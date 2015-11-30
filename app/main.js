@@ -13,6 +13,7 @@ import Home from './components/content/home';
 import Login from './components/content/login';
 import LoadSession from './components/content/load-session';
 import Graph from './components/content/graph';
+import Sample from './components/content/sample';
 
 var history = createHashHistory({
   queryKey: false
@@ -25,6 +26,7 @@ var routes = (
       <Route path="home" component={ Home }/>
       <Route path="login" component={ Login }/>
       <Route path="load-session" component={ LoadSession }/>
+      <Route path="sample" component={ Sample }/>
       <Route path="graph/:sessionId/:sessionName" component={ Graph }/>
 
 

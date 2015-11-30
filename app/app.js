@@ -9,9 +9,6 @@ import FooterDiv from './components/footerDiv';
 import UpperButton from './components/common/upperButton';
 import Graph from './components/content/graph';
 
-const SAMPLEID = 1111;
-//TODO GET SAMPLE ID .......
-
 var App = React.createClass({
 
   mixins: [State],
@@ -40,7 +37,7 @@ var App = React.createClass({
         {name: 'Run ResponseNet', link: 'home'},
         {name: 'Login / change user', link: 'login'},
         {name: 'Load previous session', link: 'load-session'},
-        {name: 'Show example output', link: `graph/${SAMPLEID}`},
+        {name: 'Show example output', link: `sample`},
         {
           name: 'Tutorial',
           href: 'http://netbio.bgu.ac.il/labwebsite/?q=responsenet-webserver-tutorial',

@@ -8,7 +8,7 @@ var SemanticInputFile = React.createClass({
     console.log(file);
     if (file.length > 0) {
       this.props.onSelect(file);
-    }else{
+    } else {
       this.props.onSelect(false);
     }
   },
@@ -17,7 +17,7 @@ var SemanticInputFile = React.createClass({
     var classes = ClassNames('ui icon file-button button', {disabled: isDisabled, positive: isPositive});
     return (
         <div className={classes} id={buttonId}>
-          <i className="file outline icon"></i> {buttonTag}
+          <i className="file outline icon"/> {buttonTag}
           <input type="file" ref="fileInput"
                  onChange={this.onSelect}
                  className="ui file"/>

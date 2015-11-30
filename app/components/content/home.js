@@ -209,8 +209,9 @@ var Home = React.createClass({
       localStorage.userName = "anonymous_" + generateGUID();
       userName = localStorage.userName;
     }
+    var sessionId = generateGUID();
     var data = [
-      generateGUID(),
+      sessionId,
       userName,
       this.state.jobName,
       this.state.jobComments,
@@ -235,15 +236,12 @@ var Home = React.createClass({
       false
     ];
     getXML("RunResponseNet", data).fork(R.noop, (res) => {
-      var parsed = JSON.parse(res.text);
-      var data = getJSONFromGraphML(getXMLFromString(parsed.result));
-      console.log(res);
-
+      this.history.pushState(null, `/graph/${sessionId}/${this.state.jobName}`);
     });
   },
 
   componentWillUpdate(nextProps, nextState) {
-    console.log(nextState);
+
   },
 
 

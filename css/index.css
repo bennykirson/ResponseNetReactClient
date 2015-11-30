@@ -48,6 +48,9 @@ img {
     right: 0.5%;
 }
 
+.hover{
+    cursor: pointer;
+}
 a:hover {
     cursor: pointer;
 }

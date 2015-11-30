@@ -5,8 +5,17 @@ import QTipPopup from '../common/qtipPopup';
 const LINK = "http://amigo.geneontology.org/cgi-bin/amigo/term-details.cgi?term=";
 var GeneOntologyTab = React.createClass({
       componentWillMount() {
+
         this.props.getGO();
+
       },
+   componentWillReceiveProps(nextProps){
+     this.setState({
+       collapsedBookkeeping: []
+     });
+   },
+
+
       getInitialState() {
         return {
           collapsedBookkeeping: []
@@ -30,53 +39,59 @@ var GeneOntologyTab = React.createClass({
               </h4>
             </div>
         ) : (
-            <aiv>
+            <div>
               <h4>Click a protein to get its gene ontology annotation<QTipPopup
                   content="Select a group of proteins and the GO annotations will be displayed here" title=""/>
               </h4>
 
               <div className="vertical-scrollable-tab">
                 {GO.map((node, i)=> {
+                  var mainCounter=i*5;
+                  var helperCounter=1;
+                  var counter=mainCounter+helperCounter;
+
                   const label =
-                      <span className="node" onClick={this.handleClick.bind(null, i)}>
+                      <span className="node" onClick={this.handleClick.bind(null, counter)}>
               {node.name}
             </span>;
                   return (
                       <TreeView
-                          key={i}
+                          key={counter}
                           nodeLabel={label}
-                          collapsed={!collapsedBookkeeping[i]}
-                          onClick={this.handleClick.bind(null, i)}>
+                          collapsed={!collapsedBookkeeping[counter]}
+                          onClick={this.handleClick.bind(null, counter)}>
                         {node.children.map((child, j) => {
+                          helperCounter++;
+                          var counter=mainCounter+helperCounter;
                           if (child.id === "Description") {
                             const childLabel = <span className="node"
-                                                     onClick={this.handleClick.bind(null,j)}>{child.id}</span>;
+                                                     onClick={this.handleClick.bind(null,counter)}>{child.id}</span>;
                             return (
                                 <TreeView
-                                    key={j}
+                                    key={counter}
                                     nodeLabel={childLabel}
-                                    collapsed={!collapsedBookkeeping[j]}
-                                    onClick={this.handleClick.bind(null, j)}>
+                                    collapsed={!collapsedBookkeeping[counter]}
+                                    onClick={this.handleClick.bind(null, counter)}>
                                   <div className="label"
-                                       key={j}>{child.value}</div>
+                                       key={counter}>{child.value}</div>
                                 </TreeView>
                             )
                           } else {
                             const childLabel = <span className="node"
-                                                     onClick={this.handleClick.bind(null,j)}>{child.id}</span>;
+                                                     onClick={this.handleClick.bind(null,counter)}>{child.id}</span>;
 
                             return (
                                 <TreeView
-                                    key={j}
+                                    key={counter}
                                     nodeLabel={childLabel}
-                                    collapsed={!collapsedBookkeeping[j]}
-                                    onClick={this.handleClick.bind(null, j)}>
+                                    collapsed={!collapsedBookkeeping[counter]}
+                                    onClick={this.handleClick.bind(null, counter)}>
                                   {child.value.map((dataSet, k)=> {
                                     var hrefLink = LINK + (dataSet.link).split(':')[1];
                                     var text="- "+dataSet.text;
                                     return (<div className="label"
                                                  key={k}>
-                                      <a href={hrefLink}>{dataSet.link}</a>
+                                      <a href={hrefLink} target="_blank">{dataSet.link}</a>
                                       {text}</div>)
                                   })}
                                 </TreeView>
@@ -88,21 +103,10 @@ var GeneOntologyTab = React.createClass({
                   )
                 })}
               </div>
-            </aiv>
+            </div>
         )
       }
     })
     ;
 
 export default GeneOntologyTab;
-
-/**
-
- for later !!!!!
-
- !!!!!!!!!!!!!!!!
-
-
- !!!!!!!!!!!!!!
- !!!!!!!!!!!!!!
- **/
