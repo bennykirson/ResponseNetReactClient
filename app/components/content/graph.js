@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import { getGeneOntologyFromXML,getGraphMLFromData,getChemicalsFromXML,getSummaryFromXML,getFilesFromXML,getSessionsFromXML, getXMLFromString ,getJSONFromGraphML} from '../../utils/utilities';
 import getXML from "../../api/api";
 import R from "ramda";
@@ -16,6 +16,7 @@ import LayersTab from '../tabber/layersTab';
 import LogTab from '../tabber/logTab';
 import SummaryTab from '../tabber/summaryTab';
 import LayerUtils from '../../utils/layerUtils';
+import SplitPane from '../graph/splitPane';
 
 //End Tabs imports
 
@@ -456,6 +457,13 @@ var Graph = React.createClass({
         <div>
           {this.state.isLoaded ? (
               <div>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                <br/>
                 <div className="ui grid">
                   <div className="ui ten wide column">
                     <CytoscapeComponent data={this.state.graph}
@@ -536,8 +544,11 @@ var Graph = React.createClass({
               </div>
 
           ) : (
-              <div className="ui active dimmer">
-                <div className="ui medium text loader">Graph is being loaded....</div>
+              <div className="ui active dimmer custom-cursor">
+                <div className="ui header">
+                  Graph is being loaded...
+                </div>
+                  <img src="statics/graphics/network-gif.gif" alt="loading"/>
               </div>
           )}
         </div>

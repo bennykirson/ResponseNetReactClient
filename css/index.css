@@ -230,3 +230,6 @@ a:hover {
     -ms-transform: rotate(-90deg);
     transform: rotate(-90deg);
 }
+.custom-cursor{
+    cursor:progress;
+}

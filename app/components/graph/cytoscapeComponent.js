@@ -397,12 +397,10 @@ var CytoscapeComponent = React.createClass({
       {
         var {data,...other}=this.props;
         return (
-            <div id="cytoscapeDiv"/>
+            <div id="cytoscapeDiv"></div>
         );
       }
-    })
-    ;
-
+    });
 
 export default CytoscapeComponent;
 
